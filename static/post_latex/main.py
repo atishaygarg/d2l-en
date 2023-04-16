@@ -4,15 +4,6 @@ import regex
 import sys
 
 def _unnumber_chaps_and_secs(lines):
-    def _startswith_unnumbered(l):
-        UNNUMBERED = {'\\section{Exercise',
-                      '\\section{Exercises',
-                      '\\subsection{Exercise',
-                      '\\subsection{Exercises'}
-        for unnum in UNNUMBERED:
-            if l.startswith(unnum):
-                return True
-        return False
 
     # Preface, Installation, and Notation are unnumbered chapters
     NUM_UNNUMBERED_CHAPS = 3
@@ -40,9 +31,7 @@ def _unnumber_chaps_and_secs(lines):
             if (l.startswith('\\section') or l.startswith('\\subsection')
                     or l.startswith('\\subsubsection')):
                 lines[i] = l.replace('section{', 'section*{')
-        # Unnumber summary, references, exercises, qr code in numbered chapters
-        elif _startswith_unnumbered(l):
-            lines[i] = l.replace('section{', 'section*{')
+
     # Since we inserted '\n' in some lines[i], re-build the list
     lines = '\n'.join(lines).split('\n')
 
@@ -59,6 +48,34 @@ def _sec_to_chap(lines):
             if src.startswith('{Section \\ref') and 'index:' in src:
                 tgt = src.replace('Section \\ref', 'Chapter \\ref')
                 lines[i] = lines[i].replace(src, tgt)
+
+# Apple roman numbers for front matters and page number 1 starts from the Introduction chapter
+def _pagenumbering(lines):
+    BEGINDOC = '\\begin{document}'
+    FRONTNUMS = ['\\pagenumbering{roman}',
+    '\\pagestyle{empty}',
+    '\\halftitle',
+    '\\cleardoublepage']
+    INTRONUMS = ['\\mainmatter', '\\pagenumbering{arabic}', '\\setcounter{page}{1}']
+    CHAPINTRO = '\\chapter{Introduction}'
+    chapintro_i = -1
+    for i, l in enumerate(lines):
+        if l.startswith(BEGINDOC):
+            frontnums_i = i + 1
+        elif l.startswith(CHAPINTRO):
+            chapintro_i = i
+            break
+    for i, v in enumerate(FRONTNUMS):
+        lines.insert(frontnums_i + i, v)
+    for i, v in enumerate(INTRONUMS):
+        if chapintro_i > 0:
+            lines.insert(chapintro_i + len(FRONTNUMS) + i, v)
+
+# E.g., \chapter{Builders’ Guide} -> \chapter{Builders' Guide}
+def _replace_quote_in_chapter_title(lines):
+    for i, l in enumerate(lines):
+        if l.startswith('\\chapter{'):
+            lines[i] = lines[i].replace('’', '\'')
 
 
 # Remove date
@@ -134,6 +151,8 @@ def main():
     _sec_to_chap(lines)
     #lines = _delete_discussions_title(lines)
     _protect_hyperlink_in_caption(lines)
+    _pagenumbering(lines)
+    _replace_quote_in_chapter_title(lines)
 
     with open(tex_file, 'w') as f:
         f.write('\n'.join(lines))

@@ -388,7 +388,7 @@ and noise reduction on the synthesized image.
 
 ```{.python .input}
 #@tab all
-content_weight, style_weight, tv_weight = 1, 1e3, 10
+content_weight, style_weight, tv_weight = 1, 1e4, 10
 
 def compute_loss(X, contents_Y_hat, styles_Y_hat, contents_Y, styles_Y_gram):
     # Calculate the content, style, and total variance losses respectively
@@ -398,7 +398,7 @@ def compute_loss(X, contents_Y_hat, styles_Y_hat, contents_Y, styles_Y_gram):
         styles_Y_hat, styles_Y_gram)]
     tv_l = tv_loss(X) * tv_weight
     # Add up all the losses
-    l = sum(10 * styles_l + contents_l + [tv_l])
+    l = sum(styles_l + contents_l + [tv_l])
     return contents_l, styles_l, tv_l, l
 ```
 
@@ -560,7 +560,7 @@ Some of these blocks even have the subtle texture of brush strokes.
 1. How does the output change when you select different content and style layers?
 1. Adjust the weight hyperparameters in the loss function. Does the output retain more content or have less noise?
 1. Use different content and style images. Can you create more interesting synthesized images?
-1. Can we apply style transfer for text? Hint: you may refer to the survey paper by Hu et al. :cite:`Hu.Lee.Aggarwal.ea.2020`.
+1. Can we apply style transfer for text? Hint: you may refer to the survey paper by :citet:`10.1145/3544903.3544906`.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/378)

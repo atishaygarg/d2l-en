@@ -80,7 +80,7 @@ then our setup permits the pathological case
 in which the distribution over inputs remains
 constant: $p_S(\mathbf{x}) = p_T(\mathbf{x})$,
 but the labels are all flipped:
-$p_S(y | \mathbf{x}) = 1 - p_T(y | \mathbf{x})$.
+$p_S(y \mid \mathbf{x}) = 1 - p_T(y \mid \mathbf{x})$.
 In other words, if God can suddenly decide
 that in the future all "cats" are now dogs
 and what we previously called "dogs" are now cats---without
@@ -580,12 +580,12 @@ In *batch learning*, we have access to training features and labels $\{(\mathbf{
 ### Online Learning
 
 Now imagine that the data $(\mathbf{x}_i, y_i)$ arrives one sample at a time. More specifically, assume that we first observe $\mathbf{x}_i$, then we need to come up with an estimate $f(\mathbf{x}_i)$ and only once we have done this, we observe $y_i$ and with it, we receive a reward or incur a loss, given our decision.
-Many real problems fall into this category. For example, we need to predict tomorrow's stock price, this allows us to trade based on that estimate and at the end of the day we find out whether our estimate allowed us to make a profit. In other words, in *online learning*, we have the following cycle where we are continuously improving our model given new observations.
+Many real problems fall into this category. For example, we need to predict tomorrow's stock price, this allows us to trade based on that estimate and at the end of the day we find out whether our estimate allowed us to make a profit. In other words, in *online learning*, we have the following cycle where we are continuously improving our model given new observations:
 
 $$
 \mathrm{model} ~ f_t \longrightarrow
 \mathrm{data} ~ \mathbf{x}_t \longrightarrow
-\mathrm{estimate} ~ f_t(\mathbf{x}_t) \longrightarrow
+\mathrm{estimate} ~ f_t(\mathbf{x}_t) \longrightarrow\\
 \mathrm{observation} ~ y_t \longrightarrow
 \mathrm{loss} ~ l(y_t, f_t(\mathbf{x}_t)) \longrightarrow
 \mathrm{model} ~ f_{t+1}
@@ -677,13 +677,13 @@ These are just a few among the many pressing ethical dilemmas
 that you might encounter in a career in machine learning.
 
 
-
 ## Summary
 
-* In many cases training and test sets do not come from the same distribution. This is called distribution shift.
-* The risk is the expectation of the loss over the entire population of data drawn from their true distribution. However, this entire population is usually unavailable. Empirical risk is an average loss over the training data to approximate the risk. In practice, we perform empirical risk minimization.
-* Under the corresponding assumptions, covariate and label shift can be detected and corrected for at test time. Failure to account for this bias can become problematic at test time.
-* In some cases, the environment may remember automated actions and respond in surprising ways. We must account for this possibility when building models and continue to monitor live systems, open to the possibility that our models and the environment will become entangled in unanticipated ways.
+In many cases training and test sets do not come from the same distribution. This is called distribution shift.
+The risk is the expectation of the loss over the entire population of data drawn from their true distribution. However, this entire population is usually unavailable. Empirical risk is an average loss over the training data to approximate the risk. In practice, we perform empirical risk minimization.
+
+Under the corresponding assumptions, covariate and label shift can be detected and corrected for at test time. Failure to account for this bias can become problematic at test time.
+In some cases, the environment may remember automated actions and respond in surprising ways. We must account for this possibility when building models and continue to monitor live systems, open to the possibility that our models and the environment will become entangled in unanticipated ways.
 
 ## Exercises
 

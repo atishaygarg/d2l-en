@@ -28,6 +28,7 @@ Absent further guidance, we might have to fall back
 on random guessing whenever we encounter new examples.
 
 A number of burning questions demand immediate attention:
+
 1. How many test examples do we need to precisely estimate
    the accuracy of our classifiers on the underlying population?
 1. What happens if we keep evaluating models on the same test repeatedly?
@@ -58,14 +59,14 @@ to the deep learning practitioner.
 In short, these guarantees suggest
 that ensuring generalization
 of deep neural networks *a priori*
-requires an absurd number of examples 
+requires an absurd number of examples
 (perhaps trillions or more),
-even when we find that on the tasks we care about
-that deep neural networks typically to generalize
+even when we find that, on the tasks we care about,
+deep neural networks typically generalize
 remarkably well with far fewer examples (thousands).
 Thus deep learning practitioners often forgo
 a priori guarantees altogether,
-instead employing methods on the basis 
+instead employing methods on the basis
 that they have generalized well
 on similar problems in the past,
 and certifying generalization *post hoc*
@@ -101,7 +102,7 @@ By contrast, the *population error*
 is the *expected* fraction
 of examples in the underlying population
 (some distribution $P(X,Y)$  characterized
-by probability density function $p(\mathbf{x},y)$
+by probability density function $p(\mathbf{x},y)$)
 for which our classifier disagrees
 with the true label:
 
@@ -122,8 +123,8 @@ estimator of the population error $\epsilon(f)$.
 Moreover, because our quantity of interest $\epsilon(f)$
 is an expectation (of the random variable $\mathbf{1}(f(X) \neq Y)$)
 and the corresponding estimator $\epsilon_\mathcal{D}(f)$
-is the sample average, 
-estimating the popullation error 
+is the sample average,
+estimating the population error
 is simply the classic problem of mean estimation,
 which you may recall from :numref:`sec_prob`.
 
@@ -144,7 +145,7 @@ Thus, to estimate our test error twice as precisely,
 we must collect four times as large a test set.
 To reduce our test error by a factor of one hundred,
 we must collect ten thousand times as large a test set.
-In general, such a rate of $\mathcal{O}(1/\sqrt{n})$ 
+In general, such a rate of $\mathcal{O}(1/\sqrt{n})$
 is often the best we can hope for in statistics.
 
 Now that we know something about the asymptotic rate
@@ -235,7 +236,7 @@ and validated based on test set performance
 and you are now a master of the test set.
 For any fixed classifier $f$,
 you know to evaluate its test error $\epsilon_\mathcal{D}(f)$,
-and know precisely what can (and can't)
+and know precisely what can (and cannot)
 be said about its population error $\epsilon(f)$.
 
 So let's say that you take this knowledge
@@ -263,10 +264,10 @@ with a brilliant idea for a new modeling approach.
 The next day, you code up your new model,
 tune its hyperparameters on the validation set
 and not only are you getting your new model $f_2$ to work
-but it's error rate appears to be much lower than $f_1$'s.
+but it is error rate appears to be much lower than $f_1$'s.
 However, the thrill of discovery suddenly fades
 as you prepare for the final evaluation.
-You don't have a test set!
+You do not have a test set!
 
 Even though the original test set $\mathcal{D}$
 is still sitting on your server,
@@ -298,7 +299,7 @@ which despite a vast literature in statistics,
 remains a persistent problem plaguing scientific research.
 
 
-If that's not enough to worry you,
+If that is not enough to worry you,
 there's a special reason to distrust
 the results that you get on subsequent evaluations.
 Recall that our analysis of test set performance
@@ -325,7 +326,7 @@ when reporting confidence intervals,
 and to dial up your vigilance more aggressively
 when the stakes are high and your dataset size is small.
 When running a series of benchmark challenges,
-it's often good practice to maintain
+it is often good practice to maintain
 several test sets so that after each round,
 the old test set can be demoted to a validation set.
 
@@ -389,7 +390,7 @@ will be close to the testing error?
 Suppose that our learned classifier $f_\mathcal{S}$ must be chosen
 among some pre-specified set of functions $\mathcal{F}$.
 Recall from our discussion of test sets
-that while it's easy to estimate
+that while it is easy to estimate
 the error of a single classifier,
 things get hairy when we begin
 to consider collections of classifiers.
@@ -483,7 +484,7 @@ and for each find some model $f$ in the class
 that agrees with that labeling.
 For example, linear models on $d$-dimensional inputs
 have VC dimension $d+1$.
-It's easy to see that a line can assign
+It is easy to see that a line can assign
 any possible labeling to three points in two dimensions,
 but not to four.
 Unfortunately, the theory tends to be
@@ -526,7 +527,7 @@ In practice, the significance of the problem
 depends on the size of the holdout sets in question
 and whether they are merely being used to choose hyperparameters
 or if they are leaking information more directly.
-Nevertheless, it's good practice to curate real test sets (or multiple)
+Nevertheless, it is good practice to curate real test sets (or multiple)
 and to be as conservative as possible about how often they are used.
 
 
@@ -553,7 +554,7 @@ at $\mathcal{O}(1/\sqrt{n})$ rates.
 Following the revolutionary discovery of VC dimension,
 numerous alternative complexity measures have been proposed,
 each facilitating an analogous generalization guarantee.
-See :cite:`boucheron2005theory` for a detailed discussion
+See :citet:`boucheron2005theory` for a detailed discussion
 of several advanced ways of measuring function complexity.
 Unfortunately, while these complexity measures
 have become broadly useful tools in statistical theory,

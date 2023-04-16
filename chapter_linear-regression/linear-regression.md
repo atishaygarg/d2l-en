@@ -1,6 +1,6 @@
-```{.python .input  n=1}
+```{.python .input}
 %load_ext d2lbook.tab
-tab.interact_select(['mxnet', 'pytorch', 'tensorflow'])
+tab.interact_select(['mxnet', 'pytorch', 'tensorflow', 'jax'])
 ```
 
 # Linear Regression
@@ -30,6 +30,44 @@ The variables (age and area)
 upon which the predictions are based
 are called *features* (or *covariates*).
 
+```{.python .input}
+%%tab mxnet
+%matplotlib inline
+from d2l import mxnet as d2l
+import math
+from mxnet import np
+import time
+```
+
+```{.python .input}
+%%tab pytorch
+%matplotlib inline
+from d2l import torch as d2l
+import math
+import torch
+import numpy as np
+import time
+```
+
+```{.python .input}
+%%tab tensorflow
+%matplotlib inline
+from d2l import tensorflow as d2l
+import math
+import tensorflow as tf
+import numpy as np
+import time
+```
+
+```{.python .input}
+%%tab jax
+%matplotlib inline
+from d2l import jax as d2l
+from jax import numpy as jnp
+import math
+import time
+```
+
 ## Basics
 
 *Linear regression* may be both the simplest
@@ -40,7 +78,7 @@ linear regression flows from a few simple assumptions.
 First, we assume that the relationship
 between features $\mathbf{x}$ and target $y$
 is approximately linear,
-i.e., that the conditional mean $E[Y|X=\mathbf{x}]$
+i.e., that the conditional mean $E[Y \mid X=\mathbf{x}]$
 can be expressed as a weighted sum
 of the features $\mathbf{x}$.
 This setup allows that the target value
@@ -91,7 +129,7 @@ explicitly expressing models long-form,
 as in :eqref:`eq_price-area`, is common.
 In machine learning, we usually work
 with high-dimensional datasets,
-where it's more convenient to employ
+where it is more convenient to employ
 compact linear algebra notation.
 When our inputs consist of $d$ features,
 we can assign each an index (between $1$ and $d$)
@@ -120,6 +158,7 @@ the predictions $\hat{\mathbf{y}} \in \mathbb{R}^n$
 can be expressed via the matrix-vector product:
 
 $${\hat{\mathbf{y}}} = \mathbf{X} \mathbf{w} + b,$$
+:eqlabel:`eq_linreg-y-vec`
 
 where broadcasting (:numref:`subsec_broadcasting`) is applied during the summation.
 Given features of a training dataset $\mathbf{X}$
@@ -344,8 +383,8 @@ Linear regression happens to be a learning problem
 with a global minimum
 (whenever $\mathbf{X}$ is full rank, or equivalently,
 whenever $\mathbf{X}^\top \mathbf{X}$ is invertible).
-However, the lost surfaces for deep networks contain many saddle points and minima.
-Fortunately, we typically don't care about finding
+However, the loss surfaces for deep networks contain many saddle points and minima.
+Fortunately, we typically do not care about finding
 an exact set of parameters but merely any set of parameters
 that leads to accurate predictions (and thus low loss).
 In practice, deep learning practitioners
@@ -376,7 +415,6 @@ In the following we will stick to *prediction* whenever possible.
 
 
 
-
 ## Vectorization for Speed
 
 When training our models, we typically want to process
@@ -386,35 +424,6 @@ Doing this efficiently requires that (**we**) (~~should~~)
 fast linear algebra libraries
 rather than writing costly for-loops in Python.**)
 
-```{.python .input  n=1}
-%%tab mxnet
-%matplotlib inline
-from d2l import mxnet as d2l
-import math
-from mxnet import np
-import time
-```
-
-```{.python .input  n=1}
-%%tab pytorch
-%matplotlib inline
-from d2l import torch as d2l
-import math
-import torch
-import numpy as np
-import time
-```
-
-```{.python .input}
-%%tab tensorflow
-%matplotlib inline
-from d2l import tensorflow as d2l
-import math
-import tensorflow as tf
-import numpy as np
-import time
-```
-
 To illustrate why this matters so much,
 we can (**consider two methods for adding vectors.**)
 To start, we instantiate two 10,000-dimensional vectors
@@ -422,7 +431,7 @@ containing all ones.
 In one method, we loop over the vectors with a Python for-loop.
 In the other method, we rely on a single call to `+`.
 
-```{.python .input  n=2}
+```{.python .input}
 %%tab all
 n = 10000
 a = d2l.ones(n)
@@ -433,7 +442,7 @@ Now we can benchmark the workloads.
 First, [**we add them, one coordinate at a time,
 using a for-loop.**]
 
-```{.python .input  n=3}
+```{.python .input}
 %%tab mxnet, pytorch
 c = d2l.zeros(n)
 t = time.time()
@@ -451,9 +460,21 @@ for i in range(n):
 f'{time.time() - t:.5f} sec'
 ```
 
+```{.python .input}
+%%tab jax
+# JAX arrays are immutable, meaning that once created their contents
+# cannot be changed. For updating individual elements, JAX provides
+# an indexed update syntax that returns an updated copy
+c = d2l.zeros(n)
+t = time.time()
+for i in range(n):
+    c = c.at[i].set(a[i] + b[i])
+f'{time.time() - t:.5f} sec'
+```
+
 (**Alternatively, we rely on the reloaded `+` operator to compute the elementwise sum.**)
 
-```{.python .input  n=4}
+```{.python .input}
 %%tab all
 t = time.time()
 d = a + b
@@ -463,16 +484,16 @@ f'{time.time() - t:.5f} sec'
 The second method is dramatically faster than the first.
 Vectorizing code often yields order-of-magnitude speedups.
 Moreover, we push more of the mathematics to the library
-and need not write as many calculations ourselves,
+without the need to write as many calculations ourselves,
 reducing the potential for errors and increasing portability of the code.
 
 
 ## The Normal Distribution and Squared Loss
 :label:`subsec_normal_distribution_and_squared_loss`
 
-So far we've given a fairly functional motivation
+So far we have given a fairly functional motivation
 of the squared loss objective:
-the optimal parameters return the conditional expectation $E[Y|X]$
+the optimal parameters return the conditional expectation $E[Y\mid X]$
 whenever the underlying pattern is truly linear,
 and the loss assigns outsize penalties for outliers.
 We can also provide a more formal motivation
@@ -497,18 +518,21 @@ $$p(x) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (x - \m
 
 Below [**we define a function to compute the normal distribution**].
 
-```{.python .input  n=3}
+```{.python .input}
 %%tab all
 def normal(x, mu, sigma):
     p = 1 / math.sqrt(2 * math.pi * sigma**2)
-    return p * np.exp(-0.5 * (x - mu)**2 / sigma**2)
+    if tab.selected('jax'):
+        return p * jnp.exp(-0.5 * (x - mu)**2 / sigma**2)
+    if tab.selected('pytorch', 'mxnet', 'tensorflow'):
+        return p * np.exp(-0.5 * (x - mu)**2 / sigma**2)
 ```
 
 We can now (**visualize the normal distributions**).
 
-```{.python .input  n=8}
+```{.python .input}
 %%tab mxnet
-# Use numpy again for visualization
+# Use NumPy again for visualization
 x = np.arange(-7, 7, 0.01)
 
 # Mean and standard deviation pairs
@@ -518,10 +542,15 @@ d2l.plot(x.asnumpy(), [normal(x, mu, sigma).asnumpy() for mu, sigma in params], 
          legend=[f'mean {mu}, std {sigma}' for mu, sigma in params])
 ```
 
-```{.python .input  n=8}
-%%tab pytorch, tensorflow
-# Use numpy again for visualization
-x = np.arange(-7, 7, 0.01)
+```{.python .input}
+
+%%tab pytorch, tensorflow, jax
+if tab.selected('jax'):
+    # Use JAX NumPy for visualization
+    x = jnp.arange(-7, 7, 0.01)
+if tab.selected('pytorch', 'mxnet', 'tensorflow'):
+    # Use NumPy again for visualization
+    x = np.arange(-7, 7, 0.01)
 
 # Mean and standard deviation pairs
 params = [(0, 1), (0, 2), (3, 1)]
@@ -545,14 +574,14 @@ $$y = \mathbf{w}^\top \mathbf{x} + b + \epsilon \text{ where } \epsilon \sim \ma
 Thus, we can now write out the *likelihood*
 of seeing a particular $y$ for a given $\mathbf{x}$ via
 
-$$P(y | \mathbf{x}) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (y - \mathbf{w}^\top \mathbf{x} - b)^2\right).$$
+$$P(y \mid \mathbf{x}) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left(-\frac{1}{2 \sigma^2} (y - \mathbf{w}^\top \mathbf{x} - b)^2\right).$$
 
 As such, the likelihood factorizes.
 According to *the principle of maximum likelihood*,
 the best values of parameters $\mathbf{w}$ and $b$ are those
 that maximize the *likelihood* of the entire dataset:
 
-$$P(\mathbf y|\mathbf X) = \prod_{i=1}^{n} p(y^{(i)}|\mathbf{x}^{(i)}).$$
+$$P(\mathbf y \mid \mathbf X) = \prod_{i=1}^{n} p(y^{(i)} \mid \mathbf{x}^{(i)}).$$
 
 The equality follows since all pairs $(\mathbf{x}^{(i)}, y^{(i)})$
 were drawn independently of each other.
@@ -568,7 +597,7 @@ So, without changing anything,
 we can *minimize* the *negative log-likelihood*,
 which we can express as follows:
 
-$$-\log P(\mathbf y | \mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.$$
+$$-\log P(\mathbf y \mid \mathbf X) = \sum_{i=1}^n \frac{1}{2} \log(2 \pi \sigma^2) + \frac{1}{2 \sigma^2} \left(y^{(i)} - \mathbf{w}^\top \mathbf{x}^{(i)} - b\right)^2.$$
 
 If we assume that $\sigma$ is fixed,
 we can ignore the first term,
@@ -658,7 +687,7 @@ than any one neuron alone could express
 owes to our study of real biological neural systems.
 At the same time, most research in deep learning today
 draws inspiration from a much wider source.
-We invoke Stuart Russell and Peter Norvig :cite:`Russell.Norvig.2016`
+We invoke :citet:`Russell.Norvig.2016`
 who pointed out that although airplanes might have been *inspired* by birds,
 ornithology has not been the primary driver
 of aeronautics innovation for some centuries.
@@ -704,7 +733,7 @@ and ultimately, evaluation on previously unseen data.
     1. What happens if this is not the case?
     1. How could you fix it? What happens if you add a small amount of coordinate-wise independent Gaussian noise to all entries of $\mathbf{X}$?
     1. What is the expected value of the design matrix $\mathbf{X}^\top \mathbf{X}$ in this case?
-    1. What happens with stochastic gradient descent when $\mathbf{X}^\top \mathbf{X}$ doesn't have full rank?
+    1. What happens with stochastic gradient descent when $\mathbf{X}^\top \mathbf{X}$ does not have full rank?
 1. Assume that the noise model governing the additive noise $\epsilon$ is the exponential distribution. That is, $p(\epsilon) = \frac{1}{2} \exp(-|\epsilon|)$.
     1. Write out the negative log-likelihood of the data under the model $-\log P(\mathbf y \mid \mathbf X)$.
     1. Can you find a closed form solution?
@@ -717,7 +746,7 @@ and ultimately, evaluation on previously unseen data.
     1. For more information review the celebrated Black-Scholes model for option pricing :cite:`Black.Scholes.1973`.
 1. Suppose we want to use regression to estimate the *number* of apples sold in a grocery store.
     1. What are the problems with a Gaussian additive noise model? Hint: you are selling apples, not oil.
-    1. The [Poisson distribution](https://en.wikipedia.org/wiki/Poisson_distribution) captures distributions over counts. It is given by $p(k|\lambda) = \lambda^k e^{-\lambda}/k!$. Here $\lambda$ is the rate function and $k$ is the number of events you see. Prove that $\lambda$ is the expected value of counts $k$.
+    1. The [Poisson distribution](https://en.wikipedia.org/wiki/Poisson_distribution) captures distributions over counts. It is given by $p(k \mid \lambda) = \lambda^k e^{-\lambda}/k!$. Here $\lambda$ is the rate function and $k$ is the number of events you see. Prove that $\lambda$ is the expected value of counts $k$.
     1. Design a loss function associated with the Poisson distribution.
     1. Design a loss function for estimating $\log \lambda$ instead.
 

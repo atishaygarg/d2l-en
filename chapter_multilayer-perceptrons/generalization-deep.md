@@ -74,14 +74,27 @@ of the state of research and practice.
 
 ## Revisiting Overfitting and Regularization
 
-Recall that our approach to training machine learning models
+According to the "no free lunch" theorem by :citet:`wolpert1995no`,
+any learning algorithm generalizes better on data with certain distributions, and worse with other distributions.
+Thus, given a finite training set,
+a model relies on certain assumptions: 
+to achieve human-level performance
+it may be useful to identify *inductive biases* 
+that reflect how humans think about the world.
+Such inductive biases show preferences 
+for solutions with certain properties.
+For example,
+a deep MLP has an inductive bias
+towards building up a complicated function by composing simpler functions together.
+
+With machine learning models encoding inductive biases,
+our approach to training them
 typically consists of two phases: (i) fit the training data;
 and (ii) estimate the *generalization error*
 (the true error on the underlying population)
 by evaluating the model on holdout data.
 The difference between our fit on the training data
-and our fit on the test data is called the *generalization gap*
-and when the generalization gap is large,
+and our fit on the test data is called the *generalization gap* and when the generalization gap is large,
 we say that our models *overfit* to the training data.
 In extreme cases of overfitting,
 we might exactly fit the training data,
@@ -110,7 +123,7 @@ must come by way of regularization,
 either by reducing the complexity of the model class,
 or by applying a penalty, severely constraining
 the set of values that our parameters might take.
-But that's where things start to get weird.
+But that is where things start to get weird.
 
 Strangely, for many deep learning tasks
 (e.g., image recognition and text classification)
@@ -119,7 +132,7 @@ all of which can achieve arbitrarily low training loss
 (and zero training error).
 Because all models under consideration achieve zero training error,
 *the only avenue for further gains is to reduce overfitting*.
-Even stranger, it's often the case that
+Even stranger, it is often the case that
 despite fitting the training data perfectly,
 we can actually *reduce the generalization error*
 further by making the model *even more expressive*,
@@ -153,7 +166,7 @@ cannot explain why neural networks generalize.
 ## Inspiration from Nonparametrics
 
 Approaching deep learning for the first time,
-it's tempting to think of them as parametric models.
+it is tempting to think of them as parametric models.
 After all, the models *do* have millions of parameters.
 When we update the models, we update their parameters.
 When we save the models, we write their parameters to disk.
@@ -210,7 +223,7 @@ and thus behave, in some ways, more like nonparametric models.
 More recent theoretical research has established
 deep connection between large neural networks
 and nonparametric methods, notably kernel methods.
-In particular, :cite:`Jacot.Grabriel.Hongler.2018`
+In particular, :citet:`Jacot.Grabriel.Hongler.2018`
 demonstrated that in the limit, as multilayer perceptrons
 with randomly initialized weights grow infinitely wide,
 they become equivalent to (nonparametric) kernel methods
@@ -224,21 +237,21 @@ underscores the usefulness of nonparametric modeling
 for understanding the behavior of over-parameterized deep networks.
 
 
-## Early Learning and Early Stopping
+## Early Stopping
 
 While deep neural networks are capable of fitting arbitrary labels,
 even when labels are assigned incorrectly or randomly
-(:cite:`zhang2021understanding`),
+:cite:`zhang2021understanding`,
 this ability only emerges over many iterations of training.
-A new line of work (:cite:`Rolnick.Veit.Belongie.Shavit.2017`)
+A new line of work :cite:`Rolnick.Veit.Belongie.Shavit.2017`
 has revealed that in the setting of label noise,
 neural networks tend to fit cleanly labeled data first
 and only subsequently to interpolate the mislabeled data.
-Moreover, it's been established that this phenomenon
+Moreover, it is been established that this phenomenon
 translates directly into a guarantee on generalization:
 whenever a model has fitted the cleanly labeled data
 but not randomly labeled examples included in the training set,
-it has in fact generalized (:cite:`Garg.Balakrishnan.Kolter.Lipton.2021`).
+it has in fact generalized :cite:`Garg.Balakrishnan.Kolter.Lipton.2021`.
 
 Together these findings help to motivate *early stopping*,
 a classic technique for regularizing deep neural networks.
@@ -292,12 +305,10 @@ weight decay remains a popular tool.
 However, researchers have noted
 that typical strengths of $\ell_2$ regularization
 are insufficient to prevent the networks
-from interpolating the data
-(:cite:`zhang2021understanding`)
-and thus the benefits if interpreted
+from interpolating the data :cite:`zhang2021understanding` and thus the benefits if interpreted
 as regularization might only make sense
 in combination with the early stopping criteria.
-Absent early stopping, it's possible
+Absent early stopping, it is possible
 that just like the number of layers
 or number of nodes (in deep learning)
 or the distance metric (in 1-nearest neighbor),
@@ -318,7 +329,7 @@ in classical regularization contexts,
 such as adding noise to model inputs.
 In the next section we will introduce
 the famous dropout technique
-(invented by :cite:`Srivastava.Hinton.Krizhevsky.ea.2014`),
+(invented by :citet:`Srivastava.Hinton.Krizhevsky.ea.2014`),
 which has become a mainstay of deep learning,
 even as the theoretical basis for its efficacy
 remains similarly mysterious.
@@ -336,7 +347,7 @@ many of hard fast-held intuitions.
 Functionally, neural networks look like parametric models.
 But thinking of them as nonparametric models
 can sometimes be a more reliable source of intuition.
-Because it's often the case that all deep networks under consideration
+Because it is often the case that all deep networks under consideration
 are capable of fitting all of the training labels,
 nearly all gains must come by mitigating overfitting
 (closing the *generalization gap*).

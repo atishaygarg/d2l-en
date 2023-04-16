@@ -40,8 +40,8 @@ truly discovered a *general* pattern
 and not simply memorized our data?
 Most of the time, our predictions are only useful
 if our model discovers such a pattern.
-We don't want to predict yesterday's stock prices, but tomorrow's.
-We don't need to recognize
+We do not want to predict yesterday's stock prices, but tomorrow's.
+We do not need to recognize
 already diagnosed diseases
 for previously seen patients,
 but rather previously undiagnosed
@@ -89,7 +89,7 @@ than to the underlying distribution is called *overfitting*,
 and techniques for combatting overfitting
 are often called *regularization* methods.
 While there is no substitute for a proper introduction
-to statistical learning theory (see :cite:`Vapnik98,boucheron2005theory`),
+to statistical learning theory (see :citet:`Vapnik98,boucheron2005theory`),
 we will give you just enough intuition to get going.
 We will revisit generalization in many chapters
 throughout the book,
@@ -111,7 +111,7 @@ we assume that the training data and the test data
 are drawn *independently* from *identical* distributions.
 This is commonly called the *IID assumption*.
 While this assumption is strong,
-it's worth noting that absent any such assumption
+it is worth noting that absent any such assumption
 we would be dead in the water.
 Why should we believe that training data
 sampled from distribution $P(X,Y)$
@@ -253,7 +253,7 @@ low training error alone is not enough
 to certify low generalization error.
 Deep neural networks turn out to be just such models:
 while they generalize well in practice,
-they too powerful to allow us to conclude
+they are too powerful to allow us to conclude
 much on the basis of training error alone.
 In these cases we must rely more heavily
 on our holdout data to certify generalization
@@ -322,8 +322,8 @@ Fixing the training dataset,
 higher-order polynomial functions should always
 achieve lower (at worst, equal) training error
 relative to lower degree polynomials.
-In fact, whenever the data examples
-each have a distinct value of $x$,
+In fact, whenever each data example
+has a distinct value of $x$,
 a polynomial function with degree
 equal to the number of data examples
 can fit the training set perfectly.
@@ -381,7 +381,7 @@ Then we would be in serious trouble.
 If we overfit our training data,
 there is always the evaluation on test data to keep us honest.
 But if we overfit the test data, how would we ever know?
-See :cite:`ong2005learning` for an example how
+See :citet:`ong2005learning` for an example how
 this can lead to absurd results even for models where the complexity
 can be tightly controlled.
 
@@ -460,7 +460,7 @@ We leave you with a few rules of thumb:
 1. Why is $K$-fold cross-validation very expensive to compute?
 1. Why is the $K$-fold cross-validation error estimate biased?
 1. The VC dimension is defined as the maximum number of points that can be classified with arbitrary labels $\{\pm 1\}$ by a function of a class of functions. Why might this not be a good idea to measure how complex the class of functions is? Hint: what about the magnitude of the functions?
-1. Your manager gives you a difficult dataset on which your current algorithm doesn't perform so well. How would you justify to him that you need more data? Hint: you cannot increase the data but you can decrease it.
+1. Your manager gives you a difficult dataset on which your current algorithm does not perform so well. How would you justify to him that you need more data? Hint: you cannot increase the data but you can decrease it.
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/96)

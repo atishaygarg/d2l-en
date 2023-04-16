@@ -62,8 +62,8 @@ but not the topics of medicine or sports.
 Thus, categorizing it into one of the above categories
 on their own would not be very useful.
 This problem is commonly known as [multi-label classification](https://en.wikipedia.org/wiki/Multi-label_classification).
-See :cite:`Tsoumakas.Katakis.2007` for an overview
-and :cite:`Huang.Xu.Yu.2015`
+See :citet:`Tsoumakas.Katakis.2007` for an overview
+and :citet:`Huang.Xu.Yu.2015`
 for an effective algorithm when tagging images.
 
 ## Classification
@@ -90,9 +90,9 @@ $\{\text{baby}, \text{toddler}, \text{adolescent}, \text{young adult}, \text{adu
 then it might even make sense to cast this as
 an [ordinal regression](https://en.wikipedia.org/wiki/Ordinal_regression) problem
 and keep the labels in this format.
-See :cite:`Moon.Smola.Chang.ea.2010` for an overview
+See :citet:`Moon.Smola.Chang.ea.2010` for an overview
 of different types of ranking loss functions
-and :cite:`Beutel.Murray.Faloutsos.ea.2014` for a Bayesian approach
+and :citet:`Beutel.Murray.Faloutsos.ea.2014` for a Bayesian approach
 that addresses responses with more than one mode.
 
 In general, classification problems do not come
@@ -183,8 +183,8 @@ In other words, $\mathbf{y} = \mathbf{o} + \mathbf{\epsilon}$,
 where $\epsilon_i \sim \mathcal{N}(0, \sigma^2)$.
 This is the so-called [probit model](https://en.wikipedia.org/wiki/Probit_model),
 first introduced by :citet:`Fechner.1860`.
-While appealing, it doesn't work quite as well
-or lead to a particularly nice optimization problem,
+While appealing, it does not work quite as well
+nor lead to a particularly nice optimization problem,
 when compared to the softmax.
 
 Another way to accomplish this goal
@@ -242,7 +242,7 @@ problems in deep learning.
 To improve computational efficiency,
 we vectorize calculations in minibatches of data.
 Assume that we are given a minibatch $\mathbf{X} \in \mathbb{R}^{n \times d}$
-of $n$ features with dimensionality (number of inputs) $d$.
+of $n$ examples with dimensionality (number of inputs) $d$.
 Moreover, assume that we have $q$ categories in the output.
 Then the weights satisfy $\mathbf{W} \in \mathbb{R}^{d \times q}$
 and the bias satisfies $\mathbf{b} \in \mathbb{R}^{1\times q}$.
@@ -278,7 +278,7 @@ for the mean squared error loss in
 The softmax function gives us a vector $\hat{\mathbf{y}}$,
 which we can interpret as (estimated) conditional probabilities
 of each class, given any input $\mathbf{x}$,
-such as $\hat{y}_1$ = $P(y=\text{cat} | \mathbf{x})$.
+such as $\hat{y}_1$ = $P(y=\text{cat} \mid \mathbf{x})$.
 In the following we assume that for a dataset
 with features $\mathbf{X}$ the labels $\mathbf{Y}$
 are represented using a one-hot encoding label vector.
@@ -287,18 +287,18 @@ by checking how probable the actual classes are
 according to our model, given the features:
 
 $$
-P(\mathbf{Y} | \mathbf{X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)} | \mathbf{x}^{(i)}).
+P(\mathbf{Y} \mid \mathbf{X}) = \prod_{i=1}^n P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)}).
 $$
 
 We are allowed to use the factorization
 since we assume that each label is drawn independently
-from its respective distribution $P(\mathbf{y}|\mathbf{x}^{(i)})$.
+from its respective distribution $P(\mathbf{y}\mid\mathbf{x}^{(i)})$.
 Since maximizing the product of terms is awkward,
 we take the negative logarithm to obtain the equivalent problem
 of minimizing the negative log-likelihood:
 
 $$
--\log P(\mathbf{Y} | \mathbf{X}) = \sum_{i=1}^n -\log P(\mathbf{y}^{(i)} | \mathbf{x}^{(i)})
+-\log P(\mathbf{Y} \mid \mathbf{X}) = \sum_{i=1}^n -\log P(\mathbf{y}^{(i)} \mid \mathbf{x}^{(i)})
 = \sum_{i=1}^n l(\mathbf{y}^{(i)}, \hat{\mathbf{y}}^{(i)}),
 $$
 
@@ -387,8 +387,8 @@ We can demystify the name by introducing just the basics of information theory.
 In a nutshell, it measures the number of bits to encode what we see $\mathbf{y}$
 relative to what we predict that should happen $\hat{\mathbf{y}}$.
 We provide a very basic explanation in the following. For further
-details on information theory see 
-:cite:`Cover.Thomas.1999` or :cite:`mackay2003information`.
+details on information theory see
+:citet:`Cover.Thomas.1999` or :citet:`mackay2003information`.
 
 
 
@@ -521,7 +521,7 @@ that can be executed most efficiently on modern GPUs.
 1. Assume that we have three classes which occur with equal probability, i.e., the probability vector is $(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$.
     1. What is the problem if we try to design a binary code for it?
     1. Can you design a better code? Hint: what happens if we try to encode two independent observations? What if we encode $n$ observations jointly?
-1. When encoding signals transmitted over a physical wire, engineers don't always use binary codes. For instance, [PAM-3](https://en.wikipedia.org/wiki/Ternary_signal) uses three signal levels $\{-1, 0, 1\}$ as opposed to two levels $\{0, 1\}$. How many ternary units do you need to transmit an integer in the range $\{0, \ldots, 7\}$? Why might this be a better idea in terms of electronics?
+1. When encoding signals transmitted over a physical wire, engineers do not always use binary codes. For instance, [PAM-3](https://en.wikipedia.org/wiki/Ternary_signal) uses three signal levels $\{-1, 0, 1\}$ as opposed to two levels $\{0, 1\}$. How many ternary units do you need to transmit an integer in the range $\{0, \ldots, 7\}$? Why might this be a better idea in terms of electronics?
 1. The [Bradley-Terry model](https://en.wikipedia.org/wiki/Bradley%E2%80%93Terry_model) uses
 a logistic model to capture preferences. For a user to choose between apples and oranges one
 assumes scores $o_{\mathrm{apple}}$ and $o_{\mathrm{orange}}$. Our requirements are that larger scores should lead to a higher likelihood in choosing the associated item and that
