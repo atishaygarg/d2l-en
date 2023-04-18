@@ -133,12 +133,15 @@ class ProgressBoard(d2l.HyperParameters):
                  ls=['-', '--', '-.', ':'], colors=['C0', 'C1', 'C2', 'C3'],
                  fig=None, axes=None, figsize=(3.5, 2.5), display=True):
         self.save_hyperparameters()
+        # plt.ion()
 
     def draw(self, x, y, label, every_n=1):
         raise NotImplemented
 
     def draw(self, x, y, label, every_n=1):
         """Defined in :numref:`sec_utils`"""
+        # matplotlib.use('Qt5Agg')
+
         Point = collections.namedtuple('Point', ['x', 'y'])
         if not hasattr(self, 'raw_points'):
             self.raw_points = collections.OrderedDict()
@@ -157,7 +160,7 @@ class ProgressBoard(d2l.HyperParameters):
         points.clear()
         if not self.display:
             return
-        d2l.use_svg_display()
+        # d2l.use_svg_display()
         if self.fig is None:
             self.fig = d2l.plt.figure(figsize=self.figsize)
         plt_lines, labels = [], []
@@ -174,8 +177,18 @@ class ProgressBoard(d2l.HyperParameters):
         axes.set_xscale(self.xscale)
         axes.set_yscale(self.yscale)
         axes.legend(plt_lines, labels)
-        display.display(self.fig)
-        display.clear_output(wait=True)
+        # self.fig.canvas.render()
+        print('hhello')
+        # plt.draw()
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+        # self.fig.canvas.flush_events()
+        plt.show()
+        # plt.pause(0.0001)
+        # display.display(self.fig)
+        # display.clear_output(wait=True)
+        # QApplication.processEvents()
+        # return self.fig
 
 class Module(d2l.nn_Module, d2l.HyperParameters):
     """The base class of models.
